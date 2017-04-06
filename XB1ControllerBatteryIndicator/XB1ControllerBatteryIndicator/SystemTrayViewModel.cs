@@ -1,21 +1,21 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using Caliburn.Micro;
 using SharpDX.XInput;
+using System.Windows.Forms;
 
 namespace XB1ControllerBatteryIndicator
 {
-    public class SystemTrayViewModel : Screen
+    public class SystemTrayViewModel : Caliburn.Micro.Screen
     {
         private string _activeIcon;
         private Controller _controller;
         private string _tooltipText;
+        private bool balloon_shown = false;
 
         public SystemTrayViewModel()
         {
-            ActiveIcon = "Resources/battery_unkown.ico";
+            ActiveIcon = "Resources/battery_unknown.ico";
             GetController();
             Task.Run(() => RefreshControllerState());
         }
@@ -65,8 +65,27 @@ namespace XB1ControllerBatteryIndicator
                 }
                 else
                 {
+                    NotifyIcon balloon = new NotifyIcon();
                     TooltipText = $"Controller {_controller.UserIndex} - Battery level: {batteryInfo.BatteryLevel}";
                     ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}.ico";
+                    if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
+                    {
+                        if (balloon_shown == false)
+                        {
+                            balloon_shown = true;
+                            balloon.Icon = System.Drawing.SystemIcons.Information;
+                            balloon.Visible = true;
+                            balloon.Text = $"Battery of controller {_controller.UserIndex} is (almost) empty.";
+                            balloon.ShowBalloonTip(10000, $"Controller {_controller.UserIndex} battery low", $"Battery of controller {_controller.UserIndex} is (almost) empty.", ToolTipIcon.Info);
+                        }
+                    }
+
+                    else
+                    {
+                        balloon_shown = false;
+                        balloon.Visible = false;
+
+                    }
                 }
             }
             else
@@ -74,13 +93,13 @@ namespace XB1ControllerBatteryIndicator
                 TooltipText = $"No controller detected";
                 ActiveIcon = $"Resources/battery_disconnected.ico";
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(10000);
             RefreshControllerState();
         }
 
         public void ExitApplication()
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
     }
 }
