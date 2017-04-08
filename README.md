@@ -10,3 +10,5 @@ So far I've mainly tried to add a notification when the controller battery reach
 It's still far from perfect and there's probably better solutions to what I did, but it works for now.
 
 Only draw-back of my current approach: the notification stays even when the battery level changes back to good, so you'd have to close the program to get rid of it.
+
+A [binary release](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/releases) is available for download.
