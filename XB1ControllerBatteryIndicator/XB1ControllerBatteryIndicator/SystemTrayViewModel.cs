@@ -95,7 +95,7 @@ namespace XB1ControllerBatteryIndicator
                 else
                 {
                     TooltipText = $"No controller detected";
-                    ActiveIcon = $"Resources/battery_disconnected.ico";
+                    ActiveIcon = $"Resources/battery_unknown.ico";
                 }
                 Thread.Sleep(1000);
             }
