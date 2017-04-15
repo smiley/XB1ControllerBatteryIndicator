@@ -14,7 +14,6 @@ Controllers reported as working/being recognized so far:
 
 Currently known issues/limitations:
 * initial recognition of a newly connected controller can take a while. It will be displayed as "disconnected" at first but should switch to battery level after ~10 seconds and a button press
-* the low battery notification stays even when battery level changes back to good. A testing release that should fix this is available, but further testing is needed
 * Only one controller is recognized/monitored
 
 A [binary release](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/releases) is available for download.
