@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using SharpDX.XInput;
-using System.Windows.Forms;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
+using System.Collections.Generic;
+
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -11,16 +13,21 @@ namespace XB1ControllerBatteryIndicator
         private string _activeIcon;
         private Controller _controller;
         private string _tooltipText;
-        private bool balloon_shown = false;
-        NotifyIcon balloon = new NotifyIcon();
+        private const string APP_ID = "XB1ControllerBatteryIndicator";
+        private bool[] toast_shown = new bool[5];
+        private Dictionary<string, int> numdict = new Dictionary<string, int>();
+        
 
         public SystemTrayViewModel()
         {
-            ActiveIcon = "Resources/battery_unknown.ico";
-            GetController();
+            ActiveIcon = "Resources/battery_disconnected.ico";
             Thread th = new Thread(RefreshControllerState);
             th.IsBackground = true;
             th.Start();
+            numdict["One"] = 1;
+            numdict["Two"] = 2;
+            numdict["Three"] = 3;
+            numdict["Four"] = 4;
         }
 
         public string ActiveIcon
@@ -43,52 +50,60 @@ namespace XB1ControllerBatteryIndicator
             }
         }
 
-        private void GetController()
-        {
-            var controllers = new[]
-            {
-                new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three),
-                new Controller(UserIndex.Four)
-            };
-            _controller = controllers.FirstOrDefault(selectControler => selectControler.IsConnected);
-        }
-
         private void RefreshControllerState()
         {
             while (true)
             {
-                GetController();
+                var controllers = new[]
+                {
+                    new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three),
+                    new Controller(UserIndex.Four)
+                };
+                _controller = controllers.FirstOrDefault(selectControler => selectControler.IsConnected);
+
                 if (_controller != null)
                 {
-                    var batteryInfo = _controller.GetBatteryInformation(BatteryDeviceType.Gamepad);
-                    if (batteryInfo.BatteryType == BatteryType.Disconnected ||
-                        batteryInfo.BatteryType == BatteryType.Wired ||
-                        batteryInfo.BatteryType == BatteryType.Unknown)
+                    foreach (var CurrentController in controllers)
                     {
-                        TooltipText = $"Controller {_controller.UserIndex} - {batteryInfo.BatteryType}";
-                        ActiveIcon = $"Resources/battery_{batteryInfo.BatteryType.ToString().ToLower()}.ico";
-                    }
-                    else
-                    {
-                        TooltipText = $"Controller {_controller.UserIndex} - Battery level: {batteryInfo.BatteryLevel}";
-                        ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}.ico";
-                        if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
+                        if (CurrentController.IsConnected)
                         {
-                            if (balloon_shown == false)
+                            var batteryInfo = CurrentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
+                            if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
-                                balloon_shown = true;
-                                balloon.Icon = System.Drawing.SystemIcons.Information;
-                                balloon.Visible = true;
-                                balloon.Text = $"Battery of controller {_controller.UserIndex} is (almost) empty.";
-                                balloon.ShowBalloonTip(10000, $"Controller {_controller.UserIndex} battery low", $"Battery of controller {_controller.UserIndex} is (almost) empty.", ToolTipIcon.Info);
+                                TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
+                                ActiveIcon = $"Resources/battery_wired_{CurrentController.UserIndex.ToString().ToLower()}.ico";
                             }
-                        }
+                            else if (batteryInfo.BatteryType == BatteryType.Disconnected)
+                            {
+                                TooltipText = $"Controller {CurrentController.UserIndex} - Found but still waiting for battery data...";
+                                ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                            }
+                            else if (batteryInfo.BatteryType == BatteryType.Unknown)
+                            {
+                                TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
+                                ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                            }
+                            else
+                            {
+                                TooltipText = $"Controller {CurrentController.UserIndex} - Battery level: {batteryInfo.BatteryLevel}";
+                                ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
+                                {
+                                    if (toast_shown[numdict[$"{CurrentController.UserIndex}"]] == false)
+                                    {
+                                        toast_shown[numdict[$"{CurrentController.UserIndex}"]] = true;
+                                        string ToastHeadline = "XB1ControllerBatteryIndicator";
+                                        string ToastText = $"Battery of controller {CurrentController.UserIndex} is (almost) empty.";
+                                        ShowToast(ToastHeadline, ToastText);
+                                    }
+                                }
 
-                        else
-                        {
-                            balloon_shown = false;
-                            balloon.Visible = false;
-
+                                else
+                                {
+                                    toast_shown[numdict[$"{CurrentController.UserIndex}"]] = false;
+                                }
+                            }
+                            Thread.Sleep(5000);
                         }
                     }
                 }
@@ -99,6 +114,29 @@ namespace XB1ControllerBatteryIndicator
                 }
                 Thread.Sleep(1000);
             }
+        }
+
+        private void ShowToast(string ToastHeadline, string ToastText)
+        {
+            // Get a toast XML template
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+            // Fill in the text elements
+            XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
+            stringElements[0].AppendChild(toastXml.CreateTextNode(ToastHeadline));
+            stringElements[1].AppendChild(toastXml.CreateTextNode(ToastText));
+
+            // Create the toast and attach event listeners
+            ToastNotification toast = new ToastNotification(toastXml);
+            toast.Activated += ToastActivated;
+
+            // Show the toast
+            ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
+        }
+
+        private void ToastActivated(ToastNotification sender, object e)
+        {
+            //do nothing
         }
 
         public void ExitApplication()
