@@ -54,43 +54,53 @@ namespace XB1ControllerBatteryIndicator
         {
             while (true)
             {
+                //Initialize controllers
                 var controllers = new[]
                 {
                     new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three),
                     new Controller(UserIndex.Four)
                 };
+                //Check if at least one is present
                 _controller = controllers.FirstOrDefault(selectControler => selectControler.IsConnected);
 
                 if (_controller != null)
                 {
+                    //cycle through all recognized controllers
                     foreach (var CurrentController in controllers)
                     {
                         if (CurrentController.IsConnected)
                         {
                             var batteryInfo = CurrentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
+                            //wired
                             if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
                                 TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
                                 ActiveIcon = $"Resources/battery_wired_{CurrentController.UserIndex.ToString().ToLower()}.ico";
                             }
+                            //"disconnected", a controller that was detected but hasn't sent battery data yet has this state
                             else if (batteryInfo.BatteryType == BatteryType.Disconnected)
                             {
                                 TooltipText = $"Controller {CurrentController.UserIndex} - Found but still waiting for battery data...";
                                 ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
                             }
+                            //this state should never happen
                             else if (batteryInfo.BatteryType == BatteryType.Unknown)
                             {
                                 TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
                                 ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
                             }
+                            //a battery level was detected
                             else
                             {
                                 TooltipText = $"Controller {CurrentController.UserIndex} - Battery level: {batteryInfo.BatteryLevel}";
                                 ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                //when "empty" state is detected...
                                 if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
                                 {
+                                    //check if toast (notification) for current controller was already triggered
                                     if (toast_shown[numdict[$"{CurrentController.UserIndex}"]] == false)
                                     {
+                                        //if not, trigger it
                                         toast_shown[numdict[$"{CurrentController.UserIndex}"]] = true;
                                         string ToastHeadline = "XB1ControllerBatteryIndicator";
                                         string ToastText = $"Battery of controller {CurrentController.UserIndex} is (almost) empty.";
@@ -100,6 +110,7 @@ namespace XB1ControllerBatteryIndicator
 
                                 else
                                 {
+                                    //battery back to a good level, return toast check to false
                                     toast_shown[numdict[$"{CurrentController.UserIndex}"]] = false;
                                 }
                             }
