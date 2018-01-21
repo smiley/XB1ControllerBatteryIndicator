@@ -18,7 +18,7 @@ namespace XB1ControllerBatteryIndicator
         }
         RegistryKey autoStartKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
         private string appID = "XB1ControllerBatteryIndicator";
-        string xmlUrl = "http://dummy.to.be.replaced/current_version.xml";
+        string xmlUrl = "http://xb1cbi.kienai.de/current_version.xml";
         
         //create autostart registry key
         private void StartWithWindows()
