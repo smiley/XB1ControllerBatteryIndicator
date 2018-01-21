@@ -10,6 +10,7 @@ When more than one controller is present, the tray icon will cycle through the s
 
 ![Tray icon](https://i.imgur.com/rxWAsu8.gif "Tray icon cycling through multiple controllers")
 
+When a controller reaches low battery level, a notification is displayed.  
 
 ![Imgur](https://i.imgur.com/LPUBWtl.png "Toast message with low battery warning")
 
@@ -24,4 +25,6 @@ Controllers reported as working/being recognized so far:
 Currently known issues/limitations:
 * initial recognition of a newly connected controller can take a while. It will be displayed as "waiting for battery level data" at first but should switch to battery level after ~10 seconds and a button press. (This might be a limitation of the XInput API.)
 
-**[You can download the latest version here](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/releases).**
+**[You can download the latest version here](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/releases).**  
+Some additional details about how it works and what it shows can be found on the [wiki page](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/wiki).  
+Found a bug or wanna give feedback? Open an issue here in github or leave a comment over on [reddit](https://www.reddit.com/r/pcmasterrace/comments/7cx2f1/xbox_one_controller_battery_indicator_for_windows/).
