@@ -7,12 +7,9 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Microsoft.Win32;
-using System.Windows.Controls;
 
 namespace XB1ControllerBatteryIndicator
 {
