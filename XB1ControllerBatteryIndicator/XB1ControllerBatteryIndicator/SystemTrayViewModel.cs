@@ -24,7 +24,7 @@ namespace XB1ControllerBatteryIndicator
 
         public SystemTrayViewModel()
         {
-            ActiveIcon = "Resources/battery_disconnected.ico";
+            ActiveIcon = "Resources/battery_unknown.ico";
             numdict["One"] = 1;
             numdict["Two"] = 2;
             numdict["Three"] = 3;
@@ -113,8 +113,14 @@ namespace XB1ControllerBatteryIndicator
 
                                 else
                                 {
-                                    //battery back to a good level, return toast check to false
-                                    toast_shown[numdict[$"{CurrentController.UserIndex}"]] = false;
+                                    //battery back to a good level, check if toast was triggered just in case...
+                                    if (toast_shown[numdict[$"{CurrentController.UserIndex}"]] == true)
+                                    {
+                                        //...and reset the notification
+                                        toast_shown[numdict[$"{CurrentController.UserIndex}"]] = false;
+                                        ToastNotificationManager.History.Remove($"Controller{CurrentController.UserIndex}", "ControllerToast", APP_ID);
+                                    }
+                                    
                                 }
                             }
                             Thread.Sleep(5000);
@@ -124,7 +130,7 @@ namespace XB1ControllerBatteryIndicator
                 else
                 {
                     TooltipText = $"No controller detected";
-                    ActiveIcon = $"Resources/battery_unknown.ico";
+                    ActiveIcon = "Resources/battery_unknown.ico";
                 }
                 Thread.Sleep(1000);
             }
@@ -203,6 +209,8 @@ namespace XB1ControllerBatteryIndicator
             var toast = new ToastNotification(toastXml);
             toast.Activated += ToastActivated;
             toast.Dismissed += ToastDismissed;
+            toast.Tag = $"Controller{ControllerIndex}";
+            toast.Group = "ControllerToast";
             //..and send it
             ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
 

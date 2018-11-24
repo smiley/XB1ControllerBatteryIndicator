@@ -118,22 +118,4 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="battery_disconnected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_disconnected.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="battery_empty" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_empty.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="battery_full" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_full.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="battery_low" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_low.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="battery_medium" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_medium.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="battery_wired" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\battery_wired.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>
