@@ -210,6 +210,7 @@
       <LastGenOutput>Icons.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Strings.de.resx" />
     <EmbeddedResource Include="Localization\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
