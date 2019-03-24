@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Data;
 using System.Xml;
+using XB1ControllerBatteryIndicator.Localization;
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -81,8 +82,8 @@ namespace XB1ControllerBatteryIndicator
                     Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                     if(curVersion.CompareTo(newVersion) < 0)
                     {
-                        string title = "New version available";
-                        string question = $"A new version of {appID} is available. Do you want to open the Homepage?";
+                        string title = Strings.NewVersionAvailable_Title;
+                        string question = string.Format(Strings.NewVersionAvailable_Body, appID);
                         if (MessageBoxResult.Yes == System.Windows.MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                         {
                             System.Diagnostics.Process.Start(update_url);

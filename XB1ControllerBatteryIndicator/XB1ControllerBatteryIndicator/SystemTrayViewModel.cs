@@ -10,6 +10,7 @@ using System.Diagnostics;
 using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using XB1ControllerBatteryIndicator.Localization;
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -71,54 +72,56 @@ namespace XB1ControllerBatteryIndicator
                 if (_controller != null)
                 {
                     //cycle through all recognized controllers
-                    foreach (var CurrentController in controllers)
+                    foreach (var currentController in controllers)
                     {
-                        if (CurrentController.IsConnected)
+                        var controllerIndexCaption = GetControllerIndexCaption(currentController.UserIndex);
+                        if (currentController.IsConnected)
                         {
-                            var batteryInfo = CurrentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
+                            var batteryInfo = currentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
                             //wired
                             if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
-                                TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
-                                ActiveIcon = $"Resources/battery_wired_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                TooltipText = string.Format(Strings.ToolTip_Wired, controllerIndexCaption);
+                                ActiveIcon = $"Resources/battery_wired_{currentController.UserIndex.ToString().ToLower()}.ico";
                             }
                             //"disconnected", a controller that was detected but hasn't sent battery data yet has this state
                             else if (batteryInfo.BatteryType == BatteryType.Disconnected)
                             {
-                                TooltipText = $"Controller {CurrentController.UserIndex} - Found but still waiting for battery data...";
-                                ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                TooltipText = string.Format(Strings.ToolTip_WaitingForData, controllerIndexCaption);
+                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower()}.ico";
                             }
                             //this state should never happen
                             else if (batteryInfo.BatteryType == BatteryType.Unknown)
                             {
-                                TooltipText = $"Controller {CurrentController.UserIndex} - {batteryInfo.BatteryType}";
-                                ActiveIcon = $"Resources/battery_disconnected_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                TooltipText = string.Format(Strings.ToolTip_Unknown, controllerIndexCaption);
+                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower()}.ico";
                             }
                             //a battery level was detected
                             else
                             {
-                                TooltipText = $"Controller {CurrentController.UserIndex} - Battery level: {batteryInfo.BatteryLevel}";
-                                ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{CurrentController.UserIndex.ToString().ToLower()}.ico";
+                                var batteryLevelCaption = GetBatteryLevelCaption(batteryInfo.BatteryLevel);
+                                TooltipText = string.Format(Strings.ToolTip_Wireless, controllerIndexCaption, batteryLevelCaption);
+                                ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{currentController.UserIndex.ToString().ToLower()}.ico";
                                 //when "empty" state is detected...
                                 if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
                                 {
                                     //check if toast (notification) for current controller was already triggered
-                                    if (toast_shown[numdict[$"{CurrentController.UserIndex}"]] == false)
+                                    if (toast_shown[numdict[$"{currentController.UserIndex}"]] == false)
                                     {
                                         //if not, trigger it
-                                        toast_shown[numdict[$"{CurrentController.UserIndex}"]] = true;
-                                        ShowToast($"{ CurrentController.UserIndex}");
+                                        toast_shown[numdict[$"{currentController.UserIndex}"]] = true;
+                                        ShowToast(currentController.UserIndex);
                                     }
                                 }
 
                                 else
                                 {
                                     //battery back to a good level, check if toast was triggered just in case...
-                                    if (toast_shown[numdict[$"{CurrentController.UserIndex}"]] == true)
+                                    if (toast_shown[numdict[$"{currentController.UserIndex}"]] == true)
                                     {
                                         //...and reset the notification
-                                        toast_shown[numdict[$"{CurrentController.UserIndex}"]] = false;
-                                        ToastNotificationManager.History.Remove($"Controller{CurrentController.UserIndex}", "ControllerToast", APP_ID);
+                                        toast_shown[numdict[$"{currentController.UserIndex}"]] = false;
+                                        ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
                                     }
                                     
                                 }
@@ -129,7 +132,7 @@ namespace XB1ControllerBatteryIndicator
                 }
                 else
                 {
-                    TooltipText = $"No controller detected";
+                    TooltipText = Strings.ToolTip_NoController;
                     ActiveIcon = "Resources/battery_unknown.ico";
                 }
                 Thread.Sleep(1000);
@@ -173,28 +176,25 @@ namespace XB1ControllerBatteryIndicator
             ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
         }
         //send a toast
-        private void ShowToast(string ControllerIndex)
+        private void ShowToast(UserIndex controllerIndex)
         {
-            //content of the toast
-            string ToastTitle = $"Controller {ControllerIndex} low battery warning";
-            string ToastText = $"Battery of controller {ControllerIndex} is (almost) empty.";
-            string ToastText2 = $"(Click on the Button to stop the reappearing of this warning.)";
-            int controllerId = numdict[$"{ControllerIndex}"];
+            int controllerId = numdict[$"{controllerIndex}"];
+            var controllerIndexCaption = GetControllerIndexCaption(controllerIndex);
             string argsDismiss = $"dismissed";
             string argsLaunch = $"{controllerId}";
             //how the content gets arranged
             string toastVisual =
                 $@"<visual>
                         <binding template='ToastGeneric'>
-                            <text>{ToastTitle}</text>
-                            <text>{ToastText}</text>
-                            <text>{ToastText2}</text>
+                            <text>{string.Format(Strings.Toast_Title, controllerIndexCaption)}</text>
+                            <text>{string.Format(Strings.Toast_Text, controllerIndexCaption)}</text>
+                            <text>{Strings.Toast_Text2}</text>
                         </binding>
                     </visual>";
             //Button on the toast
             string toastActions =
                 $@"<actions>
-                        <action content='Shut up!' arguments='{argsDismiss}'/>
+                        <action content='{Strings.Toast_Dismiss}' arguments='{argsDismiss}'/>
                    </actions>";
             //combine content and button
             string toastXmlString =
@@ -209,7 +209,7 @@ namespace XB1ControllerBatteryIndicator
             var toast = new ToastNotification(toastXml);
             toast.Activated += ToastActivated;
             toast.Dismissed += ToastDismissed;
-            toast.Tag = $"Controller{ControllerIndex}";
+            toast.Tag = $"Controller{controllerIndex}";
             toast.Group = "ControllerToast";
             //..and send it
             ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
@@ -236,6 +236,40 @@ namespace XB1ControllerBatteryIndicator
         public void ExitApplication()
         {
             System.Windows.Application.Current.Shutdown();
+        }
+
+        private string GetBatteryLevelCaption(BatteryLevel batteryLevel)
+        {
+            switch (batteryLevel)
+            {
+                case BatteryLevel.Empty:
+                    return Strings.BatteryLevel_Empty;
+                case BatteryLevel.Low:
+                    return Strings.BatteryLevel_Low;
+                case BatteryLevel.Medium:
+                    return Strings.BatteryLevel_Medium;
+                case BatteryLevel.Full:
+                    return Strings.BatteryLevel_Full;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(batteryLevel), batteryLevel, null);
+            }
+        }
+
+        private string GetControllerIndexCaption(UserIndex index)
+        {
+            switch (index)
+            {
+                case UserIndex.One:
+                    return Strings.ControllerIndex_One;
+                case UserIndex.Two:
+                    return Strings.ControllerIndex_Two;
+                case UserIndex.Three:
+                    return Strings.ControllerIndex_Three;
+                case UserIndex.Four:
+                    return Strings.ControllerIndex_Four;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(index), index, null);
+            }
         }
     }
 }

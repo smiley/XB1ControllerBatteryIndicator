@@ -7,6 +7,7 @@
         xmlns:xb1ControllerBatteryIndicator="clr-namespace:XB1ControllerBatteryIndicator"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:my="clr-namespace:XB1ControllerBatteryIndicator"
+        xmlns:localization="clr-namespace:XB1ControllerBatteryIndicator.Localization"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=xb1ControllerBatteryIndicator:SystemTrayViewModel, IsDesignTimeCreatable=True}"
         cal:Bind.AtDesignTime="True"
@@ -28,10 +29,10 @@
         reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
         -->
         <ContextMenu x:Shared="false" x:Key="MainSysTrayMenu">
-            <MenuItem x:Name="AutoStart" Header="Start with Windows" IsCheckable="True" Click="AutoStart_Click" IsChecked="{my:SettingBinding Path=AutoStart}" />
-            <MenuItem x:Name="UpdateCheck" Header="Check for new version on start" IsCheckable="True" Click="Update_Click" IsChecked="{my:SettingBinding Path=UpdateCheck}" />
+            <MenuItem x:Name="AutoStart" Header="{x:Static localization:Strings.ContextMenu_AutoStart}" IsCheckable="True" Click="AutoStart_Click" IsChecked="{my:SettingBinding Path=AutoStart}" />
+            <MenuItem x:Name="UpdateCheck" Header="{x:Static localization:Strings.ContextMenu_UpdateCheck}" IsCheckable="True" Click="Update_Click" IsChecked="{my:SettingBinding Path=UpdateCheck}" />
             <Separator/>
-            <MenuItem Header="Exit" cal:Message.Attach="ExitApplication" />
+            <MenuItem Header="{x:Static localization:Strings.ContextMenu_Exit}" cal:Message.Attach="ExitApplication" />
         </ContextMenu>
 
         <!-- the application main system tray icon -->
