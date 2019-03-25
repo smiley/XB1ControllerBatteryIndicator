@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Data;
 using System.Xml;
 using XB1ControllerBatteryIndicator.Localization;
@@ -16,11 +17,14 @@ namespace XB1ControllerBatteryIndicator
         public SystemTrayView()
         {
             InitializeComponent();
+
+            var language = new CultureInfo(Properties.Settings.Default.Language);
+            TranslationManager.CurrentLanguage = language;
         }
         RegistryKey autoStartKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
         private string appID = "XB1ControllerBatteryIndicator";
         string xmlUrl = "http://xb1cbi.kienai.de/current_version.xml";
-        
+
         //create autostart registry key
         private void StartWithWindows()
         {
@@ -80,7 +84,7 @@ namespace XB1ControllerBatteryIndicator
                 if ((newVersion != null) && (update_url != ""))
                 {
                     Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                    if(curVersion.CompareTo(newVersion) < 0)
+                    if (curVersion.CompareTo(newVersion) < 0)
                     {
                         string title = Strings.NewVersionAvailable_Title;
                         string question = string.Format(Strings.NewVersionAvailable_Body, appID);
@@ -115,7 +119,7 @@ namespace XB1ControllerBatteryIndicator
         {
             //as with the autostart-bool, this one has to be negated too...
             bool update_check = !Properties.Settings.Default.UpdateCheck;
-            if(update_check == false)
+            if (update_check == false)
             {
                 Properties.Settings.Default.UpdateCheck = true;
                 Properties.Settings.Default.Save();
@@ -126,6 +130,15 @@ namespace XB1ControllerBatteryIndicator
                 Properties.Settings.Default.UpdateCheck = false;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedLanguage = (CultureInfo)((FrameworkElement)e.OriginalSource).DataContext;
+            TranslationManager.CurrentLanguage = selectedLanguage;
+
+            Properties.Settings.Default.Language = selectedLanguage.Name;
+            Properties.Settings.Default.Save();
         }
     }
     //this enabled using the values stored in the settings file to be used in XAML
