@@ -139,7 +139,7 @@
     <value>Язык</value>
   </data>
   <data name="ContextMenu_UpdateCheck" xml:space="preserve">
-    <value>Проверять наличие новой версии при старте</value>
+    <value>Проверять наличие новой версии при запуске</value>
   </data>
   <data name="ControllerIndex_Four" xml:space="preserve">
     <value>4</value>

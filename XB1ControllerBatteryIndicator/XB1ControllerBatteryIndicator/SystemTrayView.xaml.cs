@@ -132,7 +132,7 @@ namespace XB1ControllerBatteryIndicator
             }
         }
 
-        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        private void LanguageItem_OnClick(object sender, RoutedEventArgs e)
         {
             var selectedLanguage = (CultureInfo)((FrameworkElement)e.OriginalSource).DataContext;
             TranslationManager.CurrentLanguage = selectedLanguage;

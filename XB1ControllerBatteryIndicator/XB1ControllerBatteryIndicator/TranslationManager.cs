@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Resources;
 using XB1ControllerBatteryIndicator.Localization;
 
 namespace XB1ControllerBatteryIndicator
@@ -17,14 +18,15 @@ namespace XB1ControllerBatteryIndicator
 
         private static void UpdateAvailableLanguages()
         {
+            var resourceManager = new ResourceManager(typeof(Strings));
             var result = new List<CultureInfo>();
 
-            var cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             foreach (var culture in cultures.Where(info => !Equals(info, CultureInfo.InvariantCulture)))
             {
                 try
                 {
-                    var rs = Strings.ResourceManager.GetResourceSet(culture, true, false);
+                    var rs = resourceManager.GetResourceSet(culture, true, false);
                     if (rs != null)
                         result.Add(culture);
                 }
