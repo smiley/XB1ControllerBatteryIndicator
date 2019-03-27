@@ -183,4 +183,7 @@
   <data name="ControllerIndex_Two" xml:space="preserve">
     <value>Zwei</value>
   </data>
+  <data name="ContextMenu_Language" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
 </root>
