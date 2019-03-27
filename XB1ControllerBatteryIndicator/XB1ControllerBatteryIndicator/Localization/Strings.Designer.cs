@@ -115,6 +115,15 @@ namespace XB1ControllerBatteryIndicator.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string ContextMenu_Language {
+            get {
+                return ResourceManager.GetString("ContextMenu_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Check for new version on start.
         /// </summary>
         public static string ContextMenu_UpdateCheck {

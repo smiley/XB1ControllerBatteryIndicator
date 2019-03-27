@@ -5,8 +5,10 @@ using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using System.Collections.Generic;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
@@ -25,6 +27,9 @@ namespace XB1ControllerBatteryIndicator
 
         public SystemTrayViewModel()
         {
+            GetAvailableLanguages();
+            TranslationManager.CurrentLanguageChangedEvent += (sender, args) => GetAvailableLanguages();
+
             ActiveIcon = "Resources/battery_unknown.ico";
             numdict["One"] = 1;
             numdict["Two"] = 2;
@@ -39,22 +44,16 @@ namespace XB1ControllerBatteryIndicator
         public string ActiveIcon
         {
             get { return _activeIcon; }
-            set
-            {
-                _activeIcon = value;
-                NotifyOfPropertyChange();
-            }
+            set { Set(ref _activeIcon, value); }
         }
 
         public string TooltipText
         {
             get { return _tooltipText; }
-            set
-            {
-                _tooltipText = value;
-                NotifyOfPropertyChange();
-            }
+            set { Set(ref _tooltipText, value); }
         }
+
+        public ObservableCollection<CultureInfo> AvailableLanguages { get; } = new ObservableCollection<CultureInfo>();
 
         private void RefreshControllerState()
         {
@@ -123,7 +122,7 @@ namespace XB1ControllerBatteryIndicator
                                         toast_shown[numdict[$"{currentController.UserIndex}"]] = false;
                                         ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
                                     }
-                                    
+
                                 }
                             }
                             Thread.Sleep(5000);
@@ -269,6 +268,15 @@ namespace XB1ControllerBatteryIndicator
                     return Strings.ControllerIndex_Four;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(index), index, null);
+            }
+        }
+
+        private void GetAvailableLanguages()
+        {
+            AvailableLanguages.Clear();
+            foreach (var language in TranslationManager.AvailableLanguages)
+            {
+                AvailableLanguages.Add(language);
             }
         }
     }
