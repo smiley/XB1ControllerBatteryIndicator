@@ -131,7 +131,41 @@ namespace XB1ControllerBatteryIndicator
                 Properties.Settings.Default.Save();
             }
         }
+        //lowBatteryWarningSound_Enabled-checkbox was clicked
+        private void LowBatteryWarningSound_Enabled_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("LowBatteryWarningSound_Enabled_Click");
 
+            bool lowBatteryWarningSound_Enabled = !Properties.Settings.Default.LowBatteryWarningSound_Enabled;
+            if (lowBatteryWarningSound_Enabled == false)
+            {
+                Properties.Settings.Default.LowBatteryWarningSound_Enabled = true;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.LowBatteryWarningSound_Enabled = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+        //lowBatteryWarningSound_Loop_Enabled-checkbox was clicked
+        private void LowBatteryWarningSound_Loop_Enabled_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("LowBatteryWarningSound_Loop_Enabled_Click");
+
+            bool lowBatteryWarningSoundEnabled = !Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled;
+            if (lowBatteryWarningSoundEnabled == false)
+            {
+                Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled = true;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+        //a language item checkbox was clicked
         private void LanguageItem_OnClick(object sender, RoutedEventArgs e)
         {
             var selectedLanguage = (CultureInfo)((FrameworkElement)e.OriginalSource).DataContext;

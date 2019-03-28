@@ -58,5 +58,35 @@ namespace XB1ControllerBatteryIndicator.Properties {
                 this["Language"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LowBatteryWarningSound_Enabled
+        {
+            get
+            {
+                return ((bool) (this["LowBatteryWarningSound_Enabled"]));
+            }
+            set
+            {
+                this["LowBatteryWarningSound_Enabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LowBatteryWarningSound_Loop_Enabled
+        {
+            get
+            {
+                return ((bool) (this["LowBatteryWarningSound_Loop_Enabled"]));
+            }
+            set
+            {
+                this["LowBatteryWarningSound_Loop_Enabled"] = value;
+            }
+        }
     }
 }

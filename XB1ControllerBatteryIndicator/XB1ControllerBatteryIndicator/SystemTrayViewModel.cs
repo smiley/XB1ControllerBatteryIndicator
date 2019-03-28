@@ -57,7 +57,16 @@ namespace XB1ControllerBatteryIndicator
 
         private void RefreshControllerState()
         {
-            while (true)
+            //Load synchronously (i.e. the thread will stop execution) the low battery warning sound .wav, since it's just
+            //a tiny file (or it should be, at any rate) that won't impact performance at all. Maybe the filename/path shouldn't
+            //be hard-coded: we _could_ add a file selector dialog to let the user choose whatever .wav file (s)he desires, and
+            //then copy it to a directory in the program's root directory or something like that, but I think that would be
+            //needlessly complex. Keep it simple!
+            bool lowBatteryWarningSoundPlayed = false;
+            string lowBatteryWarningPath = AppDomain.CurrentDomain.BaseDirectory + "sounds\\lowBatteryWarning.wav";
+            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(lowBatteryWarningPath);
+
+            while(true)
             {
                 //Initialize controllers
                 var controllers = new[]
@@ -112,7 +121,6 @@ namespace XB1ControllerBatteryIndicator
                                         ShowToast(currentController.UserIndex);
                                     }
                                 }
-
                                 else
                                 {
                                     //battery back to a good level, check if toast was triggered just in case...
@@ -123,6 +131,26 @@ namespace XB1ControllerBatteryIndicator
                                         ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
                                     }
 
+                                    if (batteryInfo.BatteryLevel == BatteryLevel.Low)
+                                    {
+                                        if (Properties.Settings.Default.LowBatteryWarningSound_Enabled)
+                                        {
+                                            if (Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
+                                            {
+                                                //Necessary to avoid crashing if the .wav file is missing
+                                                try
+                                                {
+                                                    soundPlayer.Play();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Debug.WriteLine(ex);
+                                                }
+
+                                                lowBatteryWarningSoundPlayed = true;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             Thread.Sleep(5000);
