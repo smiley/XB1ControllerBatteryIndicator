@@ -19,7 +19,7 @@ namespace XB1ControllerBatteryIndicator.Localization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -120,6 +120,33 @@ namespace XB1ControllerBatteryIndicator.Localization {
         public static string ContextMenu_Language {
             get {
                 return ResourceManager.GetString("ContextMenu_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Low battery warning sound.
+        /// </summary>
+        public static string ContextMenu_LowBatteryWarningSound {
+            get {
+                return ResourceManager.GetString("ContextMenu_LowBatteryWarningSound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string ContextMenu_LowBatteryWarningSound_Enabled {
+            get {
+                return ResourceManager.GetString("ContextMenu_LowBatteryWarningSound_Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repeat on loop.
+        /// </summary>
+        public static string ContextMenu_LowBatteryWarningSound_Loop_Enabled {
+            get {
+                return ResourceManager.GetString("ContextMenu_LowBatteryWarningSound_Loop_Enabled", resourceCulture);
             }
         }
         

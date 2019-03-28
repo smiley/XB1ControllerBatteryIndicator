@@ -186,4 +186,13 @@
   <data name="ContextMenu_Language" xml:space="preserve">
     <value>Sprache</value>
   </data>
+  <data name="ContextMenu_LowBatteryWarningSound" xml:space="preserve">
+    <value>schwacher Batteriewarnungton</value>
+  </data>
+  <data name="ContextMenu_LowBatteryWarningSound_Enabled" xml:space="preserve">
+    <value>Eingeschaltet</value>
+  </data>
+  <data name="ContextMenu_LowBatteryWarningSound_Loop_Enabled" xml:space="preserve">
+    <value>Loop-Wiedergabe</value>
+  </data>
 </root>
