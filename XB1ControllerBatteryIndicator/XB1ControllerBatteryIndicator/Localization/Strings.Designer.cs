@@ -124,7 +124,7 @@ namespace XB1ControllerBatteryIndicator.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Low battery warning sound.
+        ///   Looks up a localized string similar to Empty battery warning sound.
         /// </summary>
         public static string ContextMenu_LowBatteryWarningSound {
             get {

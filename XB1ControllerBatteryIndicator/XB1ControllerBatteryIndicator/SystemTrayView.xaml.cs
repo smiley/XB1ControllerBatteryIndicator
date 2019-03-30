@@ -139,8 +139,19 @@ namespace XB1ControllerBatteryIndicator
             bool lowBatteryWarningSound_Enabled = !Properties.Settings.Default.LowBatteryWarningSound_Enabled;
             if (lowBatteryWarningSound_Enabled == false)
             {
-                Properties.Settings.Default.LowBatteryWarningSound_Enabled = true;
-                Properties.Settings.Default.Save();
+                Microsoft.Win32.OpenFileDialog openWav = new Microsoft.Win32.OpenFileDialog
+                {
+                    DefaultExt = ".wav",
+                    Filter = "WAV audio (*.wav)|*.wav"
+                };
+                Nullable<bool> wavResult = openWav.ShowDialog(Application.Current.MainWindow);
+                if (wavResult.HasValue && wavResult.Value)
+                {
+                    Debug.WriteLine(openWav.FileName);
+                    Properties.Settings.Default.wavFile = openWav.FileName;
+                    Properties.Settings.Default.LowBatteryWarningSound_Enabled = true;
+                    Properties.Settings.Default.Save();
+                }
             }
             else
             {

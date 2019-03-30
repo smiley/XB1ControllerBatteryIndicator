@@ -63,8 +63,7 @@ namespace XB1ControllerBatteryIndicator
             //then copy it to a directory in the program's root directory or something like that, but I think that would be
             //needlessly complex. Keep it simple!
             bool lowBatteryWarningSoundPlayed = false;
-            string lowBatteryWarningPath = AppDomain.CurrentDomain.BaseDirectory + "sounds\\lowBatteryWarning.wav";
-            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(lowBatteryWarningPath);
+            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(Properties.Settings.Default.wavFile);
 
             while(true)
             {
@@ -86,6 +85,16 @@ namespace XB1ControllerBatteryIndicator
                         if (currentController.IsConnected)
                         {
                             var batteryInfo = currentController.GetBatteryInformation(BatteryDeviceType.Gamepad);
+                            //check if toast was already triggered and battery is no longer empty...
+                            if (batteryInfo.BatteryLevel != BatteryLevel.Empty)
+                            {
+                                if (toast_shown[numdict[$"{currentController.UserIndex}"]] == true)
+                                {
+                                    //...reset the notification
+                                    toast_shown[numdict[$"{currentController.UserIndex}"]] = false;
+                                    ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
+                                }
+                            }
                             //wired
                             if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
@@ -120,35 +129,21 @@ namespace XB1ControllerBatteryIndicator
                                         toast_shown[numdict[$"{currentController.UserIndex}"]] = true;
                                         ShowToast(currentController.UserIndex);
                                     }
-                                }
-                                else
-                                {
-                                    //battery back to a good level, check if toast was triggered just in case...
-                                    if (toast_shown[numdict[$"{currentController.UserIndex}"]] == true)
+                                    //check if notification sound is enabled
+                                    if (Properties.Settings.Default.LowBatteryWarningSound_Enabled)
                                     {
-                                        //...and reset the notification
-                                        toast_shown[numdict[$"{currentController.UserIndex}"]] = false;
-                                        ToastNotificationManager.History.Remove($"Controller{currentController.UserIndex}", "ControllerToast", APP_ID);
-                                    }
-
-                                    if (batteryInfo.BatteryLevel == BatteryLevel.Low)
-                                    {
-                                        if (Properties.Settings.Default.LowBatteryWarningSound_Enabled)
+                                        if (Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
                                         {
-                                            if (Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
+                                            //Necessary to avoid crashing if the .wav file is missing
+                                            try
                                             {
-                                                //Necessary to avoid crashing if the .wav file is missing
-                                                try
-                                                {
-                                                    soundPlayer.Play();
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    Debug.WriteLine(ex);
-                                                }
-
-                                                lowBatteryWarningSoundPlayed = true;
+                                                soundPlayer.Play();
                                             }
+                                            catch (Exception ex)
+                                            {
+                                                Debug.WriteLine(ex);
+                                            }
+                                            lowBatteryWarningSoundPlayed = true;
                                         }
                                     }
                                 }

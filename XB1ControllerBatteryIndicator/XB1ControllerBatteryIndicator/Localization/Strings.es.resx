@@ -187,7 +187,7 @@
     <value>Lenguaje</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound" xml:space="preserve">
-    <value>Sonido de advertencia de batería baja</value>
+    <value>Sonido de advertencia de batería vacía</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound_Enabled" xml:space="preserve">
     <value>Habilitado</value>

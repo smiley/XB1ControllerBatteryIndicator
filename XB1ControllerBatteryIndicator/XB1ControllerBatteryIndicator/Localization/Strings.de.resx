@@ -130,7 +130,7 @@
     <value>Beenden</value>
   </data>
   <data name="ContextMenu_UpdateCheck" xml:space="preserve">
-    <value>Beim Start nach neuen Versionen suchen</value>
+    <value>Beim Start nach neuer Version suchen</value>
   </data>
   <data name="ToolTip_NoController" xml:space="preserve">
     <value>Kein Controller erkannt</value>
@@ -187,12 +187,12 @@
     <value>Sprache</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound" xml:space="preserve">
-    <value>schwacher Batteriewarnungton</value>
+    <value>Warnton bei leerer Batterie</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound_Enabled" xml:space="preserve">
     <value>Eingeschaltet</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound_Loop_Enabled" xml:space="preserve">
-    <value>Loop-Wiedergabe</value>
+    <value>Endlos wiederholen</value>
   </data>
 </root>
