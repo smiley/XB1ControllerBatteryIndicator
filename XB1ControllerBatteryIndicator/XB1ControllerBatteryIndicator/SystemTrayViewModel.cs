@@ -13,6 +13,7 @@ using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using XB1ControllerBatteryIndicator.Localization;
+using XB1ControllerBatteryIndicator.Properties;
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -63,7 +64,9 @@ namespace XB1ControllerBatteryIndicator
             //then copy it to a directory in the program's root directory or something like that, but I think that would be
             //needlessly complex. Keep it simple!
             bool lowBatteryWarningSoundPlayed = false;
-            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(Properties.Settings.Default.wavFile);
+            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer();
+            if (File.Exists(Settings.Default.wavFile))
+                soundPlayer.SoundLocation = Settings.Default.wavFile;
 
             while(true)
             {
@@ -130,9 +133,9 @@ namespace XB1ControllerBatteryIndicator
                                         ShowToast(currentController.UserIndex);
                                     }
                                     //check if notification sound is enabled
-                                    if (Properties.Settings.Default.LowBatteryWarningSound_Enabled)
+                                    if (Settings.Default.LowBatteryWarningSound_Enabled)
                                     {
-                                        if (Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
+                                        if (Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
                                         {
                                             //Necessary to avoid crashing if the .wav file is missing
                                             try
@@ -180,22 +183,22 @@ namespace XB1ControllerBatteryIndicator
             IShellLinkW newShortcut = (IShellLinkW)new CShellLink();
 
             // Create a shortcut to the exe 
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcut.SetPath(exePath));
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcut.SetArguments(""));
+            ErrorHelper.VerifySucceeded(newShortcut.SetPath(exePath));
+            ErrorHelper.VerifySucceeded(newShortcut.SetArguments(""));
 
             // Open the shortcut property store, set the AppUserModelId property 
             IPropertyStore newShortcutProperties = (IPropertyStore)newShortcut;
 
             using (PropVariant appId = new PropVariant(APP_ID))
             {
-                ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutProperties.SetValue(SystemProperties.System.AppUserModel.ID, appId));
-                ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutProperties.Commit());
+                ErrorHelper.VerifySucceeded(newShortcutProperties.SetValue(SystemProperties.System.AppUserModel.ID, appId));
+                ErrorHelper.VerifySucceeded(newShortcutProperties.Commit());
             }
 
             // Commit the shortcut to disk 
             IPersistFile newShortcutSave = (IPersistFile)newShortcut;
 
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
+            ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
         }
         //send a toast
         private void ShowToast(UserIndex controllerIndex)
