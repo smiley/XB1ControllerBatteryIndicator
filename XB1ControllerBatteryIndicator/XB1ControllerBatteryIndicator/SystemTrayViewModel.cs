@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Diagnostics;
 using System.Globalization;
+using System.Media;
 using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
@@ -26,10 +27,13 @@ namespace XB1ControllerBatteryIndicator
         private bool[] toast_shown = new bool[5];
         private Dictionary<string, int> numdict = new Dictionary<string, int>();
 
+        private SoundPlayer _soundPlayer;
+
         public SystemTrayViewModel()
         {
             GetAvailableLanguages();
             TranslationManager.CurrentLanguageChangedEvent += (sender, args) => GetAvailableLanguages();
+            UpdateNotificationSound();
 
             ActiveIcon = "Resources/battery_unknown.ico";
             numdict["One"] = 1;
@@ -64,9 +68,6 @@ namespace XB1ControllerBatteryIndicator
             //then copy it to a directory in the program's root directory or something like that, but I think that would be
             //needlessly complex. Keep it simple!
             bool lowBatteryWarningSoundPlayed = false;
-            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer();
-            if (File.Exists(Settings.Default.wavFile))
-                soundPlayer.SoundLocation = Settings.Default.wavFile;
 
             while(true)
             {
@@ -140,7 +141,7 @@ namespace XB1ControllerBatteryIndicator
                                             //Necessary to avoid crashing if the .wav file is missing
                                             try
                                             {
-                                                soundPlayer.Play();
+                                                _soundPlayer?.Play();
                                             }
                                             catch (Exception ex)
                                             {
@@ -304,6 +305,11 @@ namespace XB1ControllerBatteryIndicator
             {
                 AvailableLanguages.Add(language);
             }
+        }
+
+        public void UpdateNotificationSound()
+        {
+            _soundPlayer = File.Exists(Settings.Default.wavFile) ? new SoundPlayer(Settings.Default.wavFile) : null;
         }
     }
 }

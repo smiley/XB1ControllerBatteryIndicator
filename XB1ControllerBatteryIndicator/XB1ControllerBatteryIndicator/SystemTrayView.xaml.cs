@@ -14,6 +14,8 @@ namespace XB1ControllerBatteryIndicator
     /// </summary>
     public partial class SystemTrayView : Window
     {
+        private SystemTrayViewModel ViewModel => DataContext as SystemTrayViewModel;
+
         public SystemTrayView()
         {
             InitializeComponent();
@@ -163,6 +165,7 @@ namespace XB1ControllerBatteryIndicator
                 Properties.Settings.Default.LowBatteryWarningSound_Enabled = false;
             }
             Properties.Settings.Default.Save();
+            ViewModel.UpdateNotificationSound();
         }
         //lowBatteryWarningSound_Loop_Enabled-checkbox was clicked
         private void LowBatteryWarningSound_Loop_Enabled_Click(object sender, RoutedEventArgs e)
