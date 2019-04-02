@@ -9,10 +9,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Diagnostics;
 using System.Globalization;
+using System.Media;
 using XB1ControllerBatteryIndicator.ShellHelpers;
 using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using XB1ControllerBatteryIndicator.Localization;
+using XB1ControllerBatteryIndicator.Properties;
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -25,10 +27,13 @@ namespace XB1ControllerBatteryIndicator
         private bool[] toast_shown = new bool[5];
         private Dictionary<string, int> numdict = new Dictionary<string, int>();
 
+        private SoundPlayer _soundPlayer;
+
         public SystemTrayViewModel()
         {
             GetAvailableLanguages();
             TranslationManager.CurrentLanguageChangedEvent += (sender, args) => GetAvailableLanguages();
+            UpdateNotificationSound();
 
             ActiveIcon = "Resources/battery_unknown.ico";
             numdict["One"] = 1;
@@ -63,7 +68,6 @@ namespace XB1ControllerBatteryIndicator
             //then copy it to a directory in the program's root directory or something like that, but I think that would be
             //needlessly complex. Keep it simple!
             bool lowBatteryWarningSoundPlayed = false;
-            System.Media.SoundPlayer soundPlayer = new System.Media.SoundPlayer(Properties.Settings.Default.wavFile);
 
             while(true)
             {
@@ -130,14 +134,14 @@ namespace XB1ControllerBatteryIndicator
                                         ShowToast(currentController.UserIndex);
                                     }
                                     //check if notification sound is enabled
-                                    if (Properties.Settings.Default.LowBatteryWarningSound_Enabled)
+                                    if (Settings.Default.LowBatteryWarningSound_Enabled)
                                     {
-                                        if (Properties.Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
+                                        if (Settings.Default.LowBatteryWarningSound_Loop_Enabled || !lowBatteryWarningSoundPlayed)
                                         {
                                             //Necessary to avoid crashing if the .wav file is missing
                                             try
                                             {
-                                                soundPlayer.Play();
+                                                _soundPlayer?.Play();
                                             }
                                             catch (Exception ex)
                                             {
@@ -180,22 +184,22 @@ namespace XB1ControllerBatteryIndicator
             IShellLinkW newShortcut = (IShellLinkW)new CShellLink();
 
             // Create a shortcut to the exe 
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcut.SetPath(exePath));
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcut.SetArguments(""));
+            ErrorHelper.VerifySucceeded(newShortcut.SetPath(exePath));
+            ErrorHelper.VerifySucceeded(newShortcut.SetArguments(""));
 
             // Open the shortcut property store, set the AppUserModelId property 
             IPropertyStore newShortcutProperties = (IPropertyStore)newShortcut;
 
             using (PropVariant appId = new PropVariant(APP_ID))
             {
-                ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutProperties.SetValue(SystemProperties.System.AppUserModel.ID, appId));
-                ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutProperties.Commit());
+                ErrorHelper.VerifySucceeded(newShortcutProperties.SetValue(SystemProperties.System.AppUserModel.ID, appId));
+                ErrorHelper.VerifySucceeded(newShortcutProperties.Commit());
             }
 
             // Commit the shortcut to disk 
             IPersistFile newShortcutSave = (IPersistFile)newShortcut;
 
-            ShellHelpers.ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
+            ErrorHelper.VerifySucceeded(newShortcutSave.Save(shortcutPath, true));
         }
         //send a toast
         private void ShowToast(UserIndex controllerIndex)
@@ -301,6 +305,11 @@ namespace XB1ControllerBatteryIndicator
             {
                 AvailableLanguages.Add(language);
             }
+        }
+
+        public void UpdateNotificationSound()
+        {
+            _soundPlayer = File.Exists(Settings.Default.wavFile) ? new SoundPlayer(Settings.Default.wavFile) : null;
         }
     }
 }
