@@ -62,11 +62,6 @@ namespace XB1ControllerBatteryIndicator
 
         private void RefreshControllerState()
         {
-            //Load synchronously (i.e. the thread will stop execution) the low battery warning sound .wav, since it's just
-            //a tiny file (or it should be, at any rate) that won't impact performance at all. Maybe the filename/path shouldn't
-            //be hard-coded: we _could_ add a file selector dialog to let the user choose whatever .wav file (s)he desires, and
-            //then copy it to a directory in the program's root directory or something like that, but I think that would be
-            //needlessly complex. Keep it simple!
             bool lowBatteryWarningSoundPlayed = false;
 
             while(true)

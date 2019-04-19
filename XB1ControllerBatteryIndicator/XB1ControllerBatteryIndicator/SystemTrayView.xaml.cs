@@ -144,7 +144,8 @@ namespace XB1ControllerBatteryIndicator
                 var openWav = new OpenFileDialog
                 {
                     DefaultExt = ".wav",
-                    Filter = "WAV audio (*.wav)|*.wav"
+                    Filter = "WAV audio (*.wav)|*.wav",
+                    InitialDirectory = "C:\\Windows\\media\\"
                 };
                 var wavResult = openWav.ShowDialog(Application.Current.MainWindow);
                 if (wavResult.GetValueOrDefault())
