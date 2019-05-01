@@ -5,6 +5,7 @@ using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using System.Collections.Generic;
 using System;
+using System.Management;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Diagnostics;
@@ -15,6 +16,8 @@ using MS.WindowsAPICodePack.Internal;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using XB1ControllerBatteryIndicator.Localization;
 using XB1ControllerBatteryIndicator.Properties;
+using System.Security.Principal;
+using Microsoft.Win32;
 
 namespace XB1ControllerBatteryIndicator
 {
@@ -26,6 +29,8 @@ namespace XB1ControllerBatteryIndicator
         private const string APP_ID = "NiyaShy.XB1ControllerBatteryIndicator";
         private bool[] toast_shown = new bool[5];
         private Dictionary<string, int> numdict = new Dictionary<string, int>();
+        private const string ThemeRegKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+        private const string ThemeRegValueName = "SystemUsesLightTheme";
 
         private SoundPlayer _soundPlayer;
 
@@ -35,7 +40,7 @@ namespace XB1ControllerBatteryIndicator
             TranslationManager.CurrentLanguageChangedEvent += (sender, args) => GetAvailableLanguages();
             UpdateNotificationSound();
 
-            ActiveIcon = "Resources/battery_unknown.ico";
+            ActiveIcon = $"Resources/battery_unknown{LightTheme()}.ico";
             numdict["One"] = 1;
             numdict["Two"] = 2;
             numdict["Three"] = 3;
@@ -98,26 +103,26 @@ namespace XB1ControllerBatteryIndicator
                             if (batteryInfo.BatteryType == BatteryType.Wired)
                             {
                                 TooltipText = string.Format(Strings.ToolTip_Wired, controllerIndexCaption);
-                                ActiveIcon = $"Resources/battery_wired_{currentController.UserIndex.ToString().ToLower()}.ico";
+                                ActiveIcon = $"Resources/battery_wired_{currentController.UserIndex.ToString().ToLower() + LightTheme()}.ico";
                             }
                             //"disconnected", a controller that was detected but hasn't sent battery data yet has this state
                             else if (batteryInfo.BatteryType == BatteryType.Disconnected)
                             {
                                 TooltipText = string.Format(Strings.ToolTip_WaitingForData, controllerIndexCaption);
-                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower()}.ico";
+                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower() + LightTheme()}.ico";
                             }
                             //this state should never happen
                             else if (batteryInfo.BatteryType == BatteryType.Unknown)
                             {
                                 TooltipText = string.Format(Strings.ToolTip_Unknown, controllerIndexCaption);
-                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower()}.ico";
+                                ActiveIcon = $"Resources/battery_disconnected_{currentController.UserIndex.ToString().ToLower() + LightTheme()}.ico";
                             }
                             //a battery level was detected
                             else
                             {
                                 var batteryLevelCaption = GetBatteryLevelCaption(batteryInfo.BatteryLevel);
                                 TooltipText = string.Format(Strings.ToolTip_Wireless, controllerIndexCaption, batteryLevelCaption);
-                                ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{currentController.UserIndex.ToString().ToLower()}.ico";
+                                ActiveIcon = $"Resources/battery_{batteryInfo.BatteryLevel.ToString().ToLower()}_{currentController.UserIndex.ToString().ToLower() + LightTheme()}.ico";
                                 //when "empty" state is detected...
                                 if (batteryInfo.BatteryLevel == BatteryLevel.Empty)
                                 {
@@ -154,7 +159,7 @@ namespace XB1ControllerBatteryIndicator
                 else
                 {
                     TooltipText = Strings.ToolTip_NoController;
-                    ActiveIcon = "Resources/battery_unknown.ico";
+                    ActiveIcon = $"Resources/battery_unknown{LightTheme()}.ico";
                 }
                 Thread.Sleep(1000);
             }
@@ -305,6 +310,51 @@ namespace XB1ControllerBatteryIndicator
         public void UpdateNotificationSound()
         {
             _soundPlayer = File.Exists(Settings.Default.wavFile) ? new SoundPlayer(Settings.Default.wavFile) : null;
+        }
+        public void WatchTheme()
+        {
+            var currentUser = WindowsIdentity.GetCurrent();
+            string query = string.Format(
+                CultureInfo.InvariantCulture,
+                @"SELECT * FROM RegistryValueChangeEvent WHERE Hive = 'HKEY_USERS' AND KeyPath = '{0}\\{1}' AND ValueName = '{2}'",
+                currentUser.User.Value,
+                ThemeRegKeyPath.Replace(@"\", @"\\"),
+                ThemeRegValueName);
+
+            try
+            {
+                var watcher = new ManagementEventWatcher(query);
+                watcher.EventArrived += (sender, args) =>
+                {
+                    LightTheme();
+                    
+                };
+
+                // Start listening for events
+                watcher.Start();
+            }
+            catch (Exception)
+            {
+                // This can fail on Windows 7
+            }
+
+            LightTheme();
+        }
+
+        private string LightTheme()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(ThemeRegKeyPath))
+            {
+                object registryValueObject = key?.GetValue(ThemeRegValueName);
+                if (registryValueObject == null)
+                {
+                    return "";
+                }
+
+                int registryValue = (int)registryValueObject;
+
+                return registryValue > 0 ? "-black" : "";
+            }
         }
     }
 }
