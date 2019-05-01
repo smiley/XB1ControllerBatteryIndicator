@@ -19,6 +19,8 @@ namespace XB1ControllerBatteryIndicator
         public SystemTrayView()
         {
             InitializeComponent();
+            CheckForUpdate();
+            this.ShowInTaskbar = false;
 
             var language = new CultureInfo(Properties.Settings.Default.Language);
             TranslationManager.CurrentLanguage = language;
@@ -90,7 +92,7 @@ namespace XB1ControllerBatteryIndicator
                     {
                         string title = Strings.NewVersionAvailable_Title;
                         string question = string.Format(Strings.NewVersionAvailable_Body, appID);
-                        if (MessageBoxResult.Yes == System.Windows.MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Question))
+                        if (MessageBoxResult.Yes == MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                         {
                             System.Diagnostics.Process.Start(update_url);
                         }
