@@ -121,10 +121,10 @@
     <value>Nová verze k dispozici</value>
   </data>
   <data name="NewVersionAvailable_Body" xml:space="preserve">
-    <value>Nová verze {0} je dostupná. Chcete otevřít Domovskou stránku?</value>
+    <value>Je dostupná nová verze {0}. Chcete otevřít Domovskou stránku?</value>
   </data>
   <data name="ContextMenu_AutoStart" xml:space="preserve">
-    <value>Spustit s Windows</value>
+    <value>Spustit při startu Windows</value>
   </data>
   <data name="ContextMenu_Exit" xml:space="preserve">
     <value>Konec</value>
@@ -190,7 +190,7 @@
     <value>Výstražný signál prázdné baterie</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound_Enabled" xml:space="preserve">
-    <value>Povoleno</value>
+    <value>Povolen</value>
   </data>
   <data name="ContextMenu_LowBatteryWarningSound_Loop_Enabled" xml:space="preserve">
     <value>Opakovat ve smyčce</value>
