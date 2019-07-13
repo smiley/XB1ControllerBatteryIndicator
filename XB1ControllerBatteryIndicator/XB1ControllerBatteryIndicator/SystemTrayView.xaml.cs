@@ -44,9 +44,11 @@ namespace XB1ControllerBatteryIndicator
         private void CheckForUpdate()
         {
             bool update_check = Properties.Settings.Default.UpdateCheck;
+            bool minorupdate_check = Properties.Settings.Default.MinorUpdateCheck;
             if (update_check == true)
             {
                 Version newVersion = null;
+                Version newMinorVersion = null;
                 string update_url = "";
                 XmlTextReader reader;
                 reader = new XmlTextReader(xmlUrl);
@@ -72,6 +74,9 @@ namespace XB1ControllerBatteryIndicator
                                         case "url":
                                             update_url = reader.Value;
                                             break;
+                                        case "minorversion":
+                                            newMinorVersion = new Version(reader.Value);
+                                            break;
                                     }
                                 }
                             }
@@ -92,6 +97,15 @@ namespace XB1ControllerBatteryIndicator
                     {
                         string title = Strings.NewVersionAvailable_Title;
                         string question = string.Format(Strings.NewVersionAvailable_Body, appID);
+                        if (MessageBoxResult.Yes == MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Question))
+                        {
+                            System.Diagnostics.Process.Start(update_url);
+                        }
+                    }
+                    else if ((minorupdate_check ==true) && (curVersion.CompareTo(newMinorVersion) < 0))
+                    {
+                        string title = Strings.NewVersionAvailable_Title;
+                        string question = string.Format(Strings.NewMinorVersionAvailable_Body, appID);
                         if (MessageBoxResult.Yes == MessageBox.Show(this, question, title, MessageBoxButton.YesNo, MessageBoxImage.Question))
                         {
                             System.Diagnostics.Process.Start(update_url);
@@ -132,6 +146,22 @@ namespace XB1ControllerBatteryIndicator
             else
             {
                 Properties.Settings.Default.UpdateCheck = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+        //minor update checkbox was clicked
+        private void MinorUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            bool minorupdate_check = !Properties.Settings.Default.MinorUpdateCheck;
+            if (minorupdate_check == false)
+            {
+                Properties.Settings.Default.MinorUpdateCheck = true;
+                Properties.Settings.Default.Save();
+                this.CheckForUpdate();
+            }
+            else
+            {
+                Properties.Settings.Default.MinorUpdateCheck = false;
                 Properties.Settings.Default.Save();
             }
         }

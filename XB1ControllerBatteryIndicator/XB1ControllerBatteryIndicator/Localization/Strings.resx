@@ -195,4 +195,13 @@
   <data name="ContextMenu_LowBatteryWarningSound_Loop_Enabled" xml:space="preserve">
     <value>Repeat on loop</value>
   </data>
+  <data name="ContextMenu_MinorUpdateCheck" xml:space="preserve">
+    <value>Also check for minor updates (new languages added)</value>
+  </data>
+  <data name="ContextMenu_UpdateCheckHeader" xml:space="preserve">
+    <value>Update check</value>
+  </data>
+  <data name="NewMinorVersionAvailable_Body" xml:space="preserve">
+    <value>A new minor update for {0} is available. Do you want to open the homepage?</value>
+  </data>
 </root>
