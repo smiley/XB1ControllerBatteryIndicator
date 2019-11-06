@@ -127,7 +127,7 @@
     <value>Start met Windows</value>
   </data>
   <data name="ContextMenu_Exit" xml:space="preserve">
-    <value>Afsluite</value>
+    <value>Afsluiten</value>
   </data>
   <data name="ContextMenu_UpdateCheck" xml:space="preserve">
     <value>Check voor een nieuwe versie bij het starten</value>
