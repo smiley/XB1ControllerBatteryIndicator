@@ -16,4 +16,17 @@ namespace XB1ControllerBatteryIndicator
             throw new NotImplementedException();
         }
     }
+
+    public class IsCurrentLanguageRTLConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return TranslationManager.CurrentLanguage.TextInfo.IsRightToLeft;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
