@@ -228,6 +228,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Localization\Strings.de.resx" />
     <EmbeddedResource Include="Localization\Strings.fr.resx" />
+    <EmbeddedResource Include="Localization\Strings.he.resx" />
     <EmbeddedResource Include="Localization\Strings.it.resx" />
     <EmbeddedResource Include="Localization\Strings.ko.resx" />
     <EmbeddedResource Include="Localization\Strings.nl.resx" />
